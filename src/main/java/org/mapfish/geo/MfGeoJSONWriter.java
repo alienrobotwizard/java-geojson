@@ -177,8 +177,8 @@ public class MfGeoJSONWriter {
     }
 
     private void encodeGeomCollection(GeometryCollection collection) throws JSONException {
+        builder.key("geometries");        
         builder.array();
-        builder.key("geometries");
 
         for (int i = 0, n = collection.getNumGeometries(); i < n; i++) {
             encodeGeometry(collection.getGeometryN(i));
