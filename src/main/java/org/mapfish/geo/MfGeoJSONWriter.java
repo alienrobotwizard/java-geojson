@@ -124,14 +124,9 @@ public class MfGeoJSONWriter {
         builder.endObject();
     }
 
-    public void encodeGeometry(Geometry g) throws JSONException {
-
-        builder.object();
-        builder.key("type");
-        builder.value(getGeometryName(g));
-
+    // Encode _only_ the coordinates portion. Doesnt handle geometry collections
+    public void encodeGeometryCoordinates(Geometry g) throws JSONException {
         GeometryType geometryType = getGeometryType(g);
-
         if (geometryType != GeometryType.MULTIGEOMETRY) {
             builder.key("coordinates");
 
@@ -169,10 +164,22 @@ public class MfGeoJSONWriter {
                 //should never happen.
                 throw new RuntimeException("No implementation for "+geometryType);
             }
+        } 
+    }
+    
+    public void encodeGeometry(Geometry g) throws JSONException {
+
+        builder.object();
+        builder.key("type");
+        builder.value(getGeometryName(g));
+
+        GeometryType geometryType = getGeometryType(g);
+        
+        if (geometryType != GeometryType.MULTIGEOMETRY) {
+            encodeGeometryCoordinates(g);
         } else {
             encodeGeomCollection((GeometryCollection) g);
         }
-
         builder.endObject();
     }
 
